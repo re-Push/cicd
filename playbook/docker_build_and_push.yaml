@@ -9,5 +9,5 @@
     - command: docker push repush/cicdproject:tomcat"{{ lookup('env', 'BUILD_NUMBER') }}"
     - command: docker push repush/cicdproject:nginx"{{ lookup('env', 'BUILD_NUMBER') }}"
     - command: docker logout
-    - command: docker rmi repush/cicdproject:"tomcat{{ lookup('env', 'BUILD_NUMBER') }}"
-    - command: docker rmi repush/cicdproject:"nginx{{ lookup('env', 'BUILD_NUMBER') }}"
+    - command: docker rmi -f repush/cicdproject:"tomcat{{ lookup('env', 'BUILD_NUMBER') }}"
+    - command: docker rmi -f repush/cicdproject:"nginx{{ lookup('env', 'BUILD_NUMBER') }}"
