@@ -5,6 +5,7 @@
     - name: Create Deployment
       k8s:
         state: present
+        namespace: default
         definition:
           apiVersion: apps/v1
           kind: DaemonSet 
