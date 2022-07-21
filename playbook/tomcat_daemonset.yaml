@@ -1,0 +1,48 @@
+- hosts: jenkins
+  gather_facts: no
+
+  tasks:
+    - name: Create Deployment
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: DaemonSet 
+          metadata:
+            name: tomcat
+          spec:
+            selector:
+              matchLabels:
+                app: tomcat
+            template:
+              metadata:
+                labels:
+                  app: tomcat
+              spec:
+                nodeSelector:
+                  node: was
+                containers:
+                - image: "repush/cicdproject:tomcat{{ lookup('env', 'BUILD_NUMBER') }}"
+                  name: tomcat
+                  ports:
+                  - containerPort: 8080
+                    protocol: TCP
+    - name: Create Service
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: tomcat
+            namespace: default
+            labels:
+              app: tomcat
+          spec:
+            type: NodePort
+            selector:
+              app: tomcat
+            ports:
+              - port: 8080
+                targetPort: 8080
+                nodePort: 31313
