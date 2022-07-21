@@ -1,0 +1,11 @@
+- name: Docker Image Build and Push
+  hosts: ansible_host
+  gather_facts: false
+
+  tasks:
+    - command: docker image build -t repush/cicdproject:tomcat"{{ lookup('env', 'BUILD_NUMBER') }}" ~/tomcat/
+    - command: docker image build -t repush/cicdproject:nginx"{{ lookup('env', 'BUILD_NUMBER') }}" ~/nginx
+    - command: docker login -u repush -p "{{ lookup('env', 'TOKEN') }}"
+    - command: docker push repush/cicdproject:tomcat"{{ lookup('env', 'BUILD_NUMBER') }}"
+    - command: docker push repush/cicdproject:nginx"{{ lookup('env', 'BUILD_NUMBER') }}"
+    - command: docker logout
