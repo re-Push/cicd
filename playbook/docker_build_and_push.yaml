@@ -3,8 +3,8 @@
   gather_facts: false
 
   tasks:
-    - command: docker image build -t repush/cicdproject:"tomcat{{ lookup('env', 'BUILD_NUMBER') }}" /home/ubuntu/java-web/tomcat/.
-    - command: docker image build -t repush/cicdproject:"nginx{{ lookup('env', 'BUILD_NUMBER') }}" /home/ubuntu/java-web/nginx/.
+    - command: docker image build --no-cache -t repush/cicdproject:"tomcat{{ lookup('env', 'BUILD_NUMBER') }}" /home/ubuntu/java-web/tomcat/.
+    - command: docker image build --no-cache -t repush/cicdproject:"nginx{{ lookup('env', 'BUILD_NUMBER') }}" /home/ubuntu/java-web/nginx/.
     - command: docker login -u repush -p "{{ lookup('env', 'TOKEN') }}"
     - command: docker push repush/cicdproject:tomcat"{{ lookup('env', 'BUILD_NUMBER') }}"
     - command: docker push repush/cicdproject:nginx"{{ lookup('env', 'BUILD_NUMBER') }}"
