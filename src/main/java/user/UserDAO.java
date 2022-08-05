@@ -14,7 +14,7 @@ public class UserDAO {
     
     public UserDAO(){ 
         try {
-            String dbURL = "jdbc:mysql://globalshop.ciz2oqzzzdnw.ap-northeast-2.rds.amazonaws.com:3306/BBS";
+            String dbURL = "jdbc:mysql://global-shop-project-db.ciz2oqzzzdnw.ap-northeast-2.rds.amazonaws.com:3306/BBS";
             String dbID = "admin";
             String dbPassword = "dkagh1.dkagh1.";
             Class.forName("com.mysql.cj.jdbc.Driver");
