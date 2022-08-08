@@ -8,8 +8,8 @@ packer {
 }
 
 source "amazon-ebs" "linux" {
-  access_key = "AKIATPELQ55IQGJM3D5K"
-  secret_key = "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"
+  access_key = "*******"
+  secret_key = "*******"
   region     = "ap-northeast-2"
   profile    = "default"
 
