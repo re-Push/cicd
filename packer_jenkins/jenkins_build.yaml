@@ -1,0 +1,52 @@
+- hosts: default
+
+  tasks:
+    - shell: sudo apt-get update
+      ignore_errors: yes
+    - shell: sudo wget https://download.oracle.com/java/18/archive/jdk-18.0.1.1_linux-x64_bin.tar.gz
+    - shell: sudo tar -zxvf jdk-18.0.1.1_linux-x64_bin.tar.gz -C /home/ubuntu/
+    - shell: sudo rm -rf jdk-18.0.1.1_linux-x64_bin.tar.gz
+    - shell: sudo apt install -y openjdk-11-jdk
+    - shell: curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+    - shell: echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+    - shell: sudo apt-get update
+      ignore_errors: yes
+    - command: apt install -y fontconfig jenkins
+    - command: apt install -y maven
+    - shell: rm -rf /usr/share/maven
+    - shell: wget https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.8.1/apache-maven-3.8.1-bin.tar.gz
+    - shell: tar -zxvf apache-maven-3.8.1-bin.tar.gz -C /usr/share/
+    - shell: mv /usr/share/apache-maven-3.8.1 /usr/share/maven
+    - command: apt install -y ca-certificates curl gnupg lsb-release
+    - command: apt install -y python3-pip
+    - shell: curl https://get.docker.com | sh
+    - shell: usermod -aG docker ubuntu
+    - pip:
+        name:
+          - docker
+          - docker-compose
+    - command: apt install -y ansible
+    - command: apt install -y python3-pip
+    - shell: sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    - shell: pip install openshift==0.11
+    - shell: echo 'ubuntu:ubuntu' | sudo chpasswd
+    - shell: sudo systemctl restart ssh
+    - shell: mkdir /home/ubuntu/.kube
+    - shell: curl -LO https://dl.k8s.io/release/v1.22.8/bin/linux/amd64/kubectl
+    - shell: sudo install kubectl /usr/local/bin/
+    - copy:
+        src: /home/vagrant/.ssh/id_rsa
+        dest: /home/ubuntu/.ssh/id_rsa
+        mode: '0600'
+    - copy:
+        src: /home/vagrant/.ssh/id_rsa.pub
+        dest: /home/ubuntu/.ssh/id_rsa.pub
+        mode: '0600'
+    - shell: sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+    - shell: sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa.pub
+    - shell: sudo systemctl restart ssh
+    - shell: echo "[defaults]" > /home/ubuntu/.ansible.cfg
+    - shell: echo "inventory = hosts.ini" >> /home/ubuntu/.ansible.cfg
+    - shell: echo "[jenkins]" > /home/ubuntu/hosts.ini
+    - shell: echo "    StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+    - shell: systemctl restart sshd

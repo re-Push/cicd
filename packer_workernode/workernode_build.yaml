@@ -1,0 +1,32 @@
+- hosts: default
+
+  tasks:
+    - command: apt update
+    - command: apt install -y ca-certificates curl gnupg lsb-release
+    - command: apt install -y python3-pip
+    - shell: curl https://get.docker.com | sh
+    - shell: usermod -aG docker ubuntu
+    - pip:
+        name:
+          - docker
+          - docker-compose
+    - command: apt-get install -y apt-transport-https ca-certificates curl
+    - shell: curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    - shell: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    - command: apt-get update
+    - shell: sudo apt-get install kubeadm=1.22.8-00 kubelet=1.22.8-00 kubectl=1.22.8-00 -y
+    - shell: echo "{" > /etc/docker/daemon.json
+    - lineinfile:
+        path: /etc/docker/daemon.json
+        line: '"exec-opts" : ["native.cgroupdriver=systemd"]'
+    - shell: echo "}" >> /etc/docker/daemon.json
+    - shell: sudo systemctl restart docker
+    - shell: sudo systemctl daemon-reload && sudo systemctl restart kubelet
+    - copy:
+        src: /home/vagrant/.ssh/id_rsa
+        dest: /root/.ssh/id_rsa
+        mode: '0600'
+    - copy:
+        src: /home/vagrant/.ssh/id_rsa.pub
+        dest: /root/.ssh/id_rsa.pub
+        mode: '0600'
